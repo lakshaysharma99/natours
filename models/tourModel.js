@@ -8,6 +8,7 @@ const tourSchema = new mongoose.Schema({
         unique: true,
         trim: true
     },
+    slug: String,
     price: {
         type: Number,
         required: [true, 'A tour must have a price!']
@@ -69,6 +70,25 @@ const tourSchema = new mongoose.Schema({
 tourSchema.virtual('durationWeeks').get(function() {
     return this.duration/7
 })
+
+//any time a change is made to a document, we can run a middleware function between issuing of a .save() event and actual saving of the document
+//there are 4 types of middleware in mongoose: document, query, model, aggregate
+//DOCUMENT MIDDLEWARE: runs before .save() and .create()
+//save middleware do not run for insertmany. it works for only save and create
+tourSchema.pre('save', function(next) {
+    this.slug = slugify(this.name, { lower: true })
+    next()
+})
+
+// tourSchema.pre('save',function(next) {
+//     console.log('Will save the doc...')
+//     next()
+// })
+
+// tourSchema.post('save', function(doc, next) {
+//     console.log(doc)
+//     next()
+// })
 
 const Tour = mongoose.model('Tour', tourSchema)
 
