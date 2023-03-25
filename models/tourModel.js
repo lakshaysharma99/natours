@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const slugify = require('slugify')
 
 const tourSchema = new mongoose.Schema({
     name: {
@@ -54,6 +55,19 @@ const tourSchema = new mongoose.Schema({
         select: false
     },
     startDates: [Date]
+}, {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+})
+//we can also pass an object for schema options in along with schema in schema definition mongoose.Schema() ;
+//toJSON: { virtuals: true } : this means that whenever json data is output as JSON, we want the virtuals to be true; same for objects
+
+
+//get is used because this virtual property will be
+//created every time we get something out the database
+//we use an regular function here because arrow function do not have their own this
+tourSchema.virtual('durationWeeks').get(function() {
+    return this.duration/7
 })
 
 const Tour = mongoose.model('Tour', tourSchema)
