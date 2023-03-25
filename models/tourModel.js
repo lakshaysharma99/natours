@@ -93,6 +93,8 @@ tourSchema.pre('save', function(next) {
 //     console.log(doc)
 //     next()
 // })
+
+
 //QUERY MIDDLEWARE:
 tourSchema.pre(/^find/, function(next) {
     this.find({secretTour: {$ne: true}})
@@ -104,6 +106,16 @@ tourSchema.pre(/^find/, function(next) {
 tourSchema.post(/^find/, function(docs, next) {
     console.log(`Query took ${Date.now() - this.start} milliseconds!`)
     console.log(docs)
+    next()
+})
+
+
+//AGREGATION MIDDLEWARE:
+tourSchema.pre('aggregate', function(next) {
+    this.pipeline().unshift({ 
+        $match: { secretTour: { $ne: true }} 
+    })
+    console.log(this.pipeline())
     next()
 })
 
