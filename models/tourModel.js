@@ -6,7 +6,9 @@ const tourSchema = new mongoose.Schema({
         type: String,
         required: [true, 'A tour must have a name!'],
         unique: true,
-        trim: true
+        trim: true,
+        maxlength: [40, 'A tour name can have at most 40 characters.'],
+        minlength: [10, 'A tour name should have at least 10 characters.']
     },
     slug: String,
     price: {
@@ -111,6 +113,7 @@ tourSchema.post(/^find/, function(docs, next) {
 
 
 //AGREGATION MIDDLEWARE:
+//unshift method is used to add elements in the beginning of the array
 tourSchema.pre('aggregate', function(next) {
     this.pipeline().unshift({ 
         $match: { secretTour: { $ne: true }} 
